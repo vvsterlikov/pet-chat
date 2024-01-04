@@ -21,6 +21,7 @@
     <modules>
         <module>boot</module>
         <module>rest</module>
+        <module>core</module>
     </modules>
 
     <properties>
