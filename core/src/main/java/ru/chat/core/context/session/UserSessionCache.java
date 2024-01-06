@@ -3,6 +3,9 @@ package ru.chat.core.context.session;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -12,17 +15,21 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 public class UserSessionCache {
+
+    @Autowired
+    private Environment environment;
+
     private final Cache<String, UserSession> cache;
 
-    private final long SESSION_EXPIRY_MINUTES = 50;
-    public UserSessionCache() {
+    public UserSessionCache(@Value("${cache.user.session.expiry}") long cacheExpiry) {
         cache = Caffeine.newBuilder()
                 .maximumSize(1000)
-                .expireAfterWrite(SESSION_EXPIRY_MINUTES, TimeUnit.MINUTES)
+                .expireAfterWrite(cacheExpiry, TimeUnit.SECONDS)
                 .evictionListener((k, v, cause) -> {
                     log.info("Evict session: {}, cause: {}", k, v);
                 })
                 .build();
+        log.info("set cache expiry to {}", cacheExpiry);
     }
 
     public void upsertSession(UserSession userSession) {
