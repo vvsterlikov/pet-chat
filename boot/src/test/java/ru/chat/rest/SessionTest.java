@@ -1,12 +1,9 @@
 package ru.chat.rest;
 
 import io.restassured.http.Cookie;
-import lombok.Builder;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import ru.chat.boot.AbstractSpringTest;
@@ -25,20 +22,28 @@ public class SessionTest extends AbstractSpringTest {
     @Autowired
     private UserSessionCache cache;
 
-    private List<UserSession> uuids;
+    private List<UserSession> userSessions;
 
     private final int SESSION_COUNT = 10;
+    private final String SAMPLE_LOGIN = "ivanov";
 
-    @BeforeAll
-    private void beforeAll() {
-        uuids = new ArrayList<>();
+    @Value("${cache.user.session.expiry}")
+    private long cacheExpiry;
+
+    @BeforeEach
+    public void beforeEach() {
+        init();
+    }
+
+    private void init() {
+        userSessions = new ArrayList<>();
         for (int i = 0; i <= SESSION_COUNT; i++) {
-            uuids.add(UserSession.builder()
-                            .login("ivanov"+i)
-                            .sessionId(UUID.randomUUID().toString())
+            userSessions.add(UserSession.builder()
+                    .login(SAMPLE_LOGIN + i)
+                    .sessionId(UUID.randomUUID().toString())
                     .build());
-            given().queryParam("login",uuids.get(i).getLogin())
-                    .cookie(new Cookie.Builder("sessionId",uuids.get(i).getSessionId()).build())
+            given().queryParam("login", userSessions.get(i).getLogin())
+                    .cookie(new Cookie.Builder("sessionId", userSessions.get(i).getSessionId()).build())
                     .port(port)
                     .urlEncodingEnabled(false)
                     .when()
@@ -51,41 +56,34 @@ public class SessionTest extends AbstractSpringTest {
 
     @Test
     public void openSessionTest() {
-        log.info("openSessionTest");
-        String login = "ivanivanov";
-        String sessionIdOld = UUID.randomUUID().toString();
-        String sessionIdNew = UUID.randomUUID().toString();
-        Cookie cookie = new Cookie.Builder("sessionId",sessionIdOld).build();
-        given().queryParam("login",login)
-                .cookie(cookie)
-                .port(port)
-                .urlEncodingEnabled(false)
-                .when()
-                .post("/session/open")
-                .then()
-                .statusCode(200);
-
-        Assertions.assertTrue(cache.isPresent(login));
-        Assertions.assertEquals(cache.getSession(login).getSessionId(), sessionIdOld);
-        Assertions.assertEquals(cache.getSession(login).getLogin(), login);
-
-        cookie = new Cookie.Builder("sessionId", sessionIdNew).build();
-
-        given().queryParam("login",login)
-                .cookie(cookie)
-                .port(port)
-                .urlEncodingEnabled(false)
-                .when()
-                .post("/session/open")
-                .then()
-                .statusCode(200);
-
-        Assertions.assertEquals(sessionIdNew, cache.getSession(login).getSessionId());
-
+        Assertions.assertTrue(cache.isPresent(SAMPLE_LOGIN + "1"));
+        Assertions.assertEquals(userSessions.get(0).getSessionId(), cache.getSession(SAMPLE_LOGIN + "0").getSessionId());
+        Assertions.assertEquals(SAMPLE_LOGIN + "1", cache.getSession(SAMPLE_LOGIN + "1").getLogin());
     }
 
     @Test
+    @SneakyThrows
     public void expiryAllTest() {
+        Thread.sleep((cacheExpiry + 1) * 1000);
+        userSessions.forEach(s -> Assertions.assertFalse(cache.isPresent(s.getLogin())));
+    }
+
+    @Test
+    public void expiryAllExceptOne() throws InterruptedException {
+        Thread.sleep((cacheExpiry + 1) * 1000 / 2);
+        cache.isPresent(SAMPLE_LOGIN + "1");
+        userSessions.get(0).actualizeLastActivityTime();
+        cache.upsertSession(userSessions.get(0));
+        Thread.sleep((cacheExpiry + 1) * 1000 / 2);
+        long cachedCount = userSessions.stream()
+                .filter(s -> cache.isPresent(s.getLogin()))
+                .count();
+        Assertions.assertEquals(1, cachedCount);
+
+        Thread.sleep((cacheExpiry + 1) * 1000);
+        Assertions.assertEquals(0, userSessions.stream()
+                                            .filter(s -> cache.isPresent(s.getLogin()))
+                                            .count());
 
     }
 }

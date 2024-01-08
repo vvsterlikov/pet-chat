@@ -16,11 +16,15 @@ public class UserSession {
 
     private String login;
 
-    private UserSessionStatus status = UserSessionStatus.OPENED;
+    private UserSessionStatus status;
 
-    private LocalDateTime lastActivityTime = LocalDateTime.now();
+    private LocalDateTime lastActivityTime;
 
     public void updateSessionId(String newSessionId) {
         this.sessionId = newSessionId;
+    }
+
+    public void actualizeLastActivityTime() {
+        this.lastActivityTime = LocalDateTime.now();
     }
 }
