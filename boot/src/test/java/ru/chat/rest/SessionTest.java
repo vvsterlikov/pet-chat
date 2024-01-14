@@ -85,5 +85,7 @@ public class SessionTest extends AbstractSpringTest {
                                             .filter(s -> cache.isPresent(s.getLogin()))
                                             .count());
 
+
+
     }
 }

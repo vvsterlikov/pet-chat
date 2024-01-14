@@ -2,6 +2,7 @@ package ru.chat.core.context.session;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ public class UserSessionCache {
         log.info("set cache expiry to {}", cacheExpiry);
     }
 
+    @Timed(value = "cache.user.session.upsert")
     public void upsertSession(UserSession userSession) {
         Optional.ofNullable(cache.getIfPresent(userSession.getLogin()))
                 .ifPresentOrElse(s -> updateSession(s, userSession.getSessionId()),
