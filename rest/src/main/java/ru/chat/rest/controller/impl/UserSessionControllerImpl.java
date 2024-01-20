@@ -8,13 +8,14 @@ import org.springframework.stereotype.Component;
 import ru.chat.core.context.session.UserSession;
 import ru.chat.core.context.session.UserSessionCache;
 import ru.chat.rest.controller.UserSessionController;
+import ru.chat.rest.service.UserSessionService;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class UserSessionControllerImpl implements UserSessionController {
 
-    private final UserSessionCache cache;
+    private final UserSessionService userSessionService;
 
     @Override
     @Path("/open")
@@ -22,7 +23,7 @@ public class UserSessionControllerImpl implements UserSessionController {
     public Response openSession(@QueryParam("login") String login,
                                 @CookieParam("sessionId") String sessionId) {
         log.info("Opening user session: login = {}, sessionId = {}", login, sessionId);
-        cache.upsertSession(UserSession.builder()
+        userSessionService.upsertSession(UserSession.builder()
                         .login(login)
                         .sessionId(sessionId)
                         .build());

@@ -63,6 +63,7 @@ public class UserSessionCache {
                 UserSession.builder()
                         .login(userSession.getLogin())
                         .sessionId(userSession.getSessionId())
+                        .lastActivityTime(LocalDateTime.now())
                         .build());
     }
 

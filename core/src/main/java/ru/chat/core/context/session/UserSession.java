@@ -18,13 +18,7 @@ public class UserSession {
 
     private UserSessionStatus status;
 
-    private LocalDateTime lastActivityTime;
+    @Builder.Default
+    private LocalDateTime lastActivityTime = LocalDateTime.now();
 
-    public void updateSessionId(String newSessionId) {
-        this.sessionId = newSessionId;
-    }
-
-    public void actualizeLastActivityTime() {
-        this.lastActivityTime = LocalDateTime.now();
-    }
 }

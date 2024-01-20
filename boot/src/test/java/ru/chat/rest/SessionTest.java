@@ -72,7 +72,6 @@ public class SessionTest extends AbstractSpringTest {
     public void expiryAllExceptOne() throws InterruptedException {
         Thread.sleep((cacheExpiry + 1) * 1000 / 2);
         cache.isPresent(SAMPLE_LOGIN + "1");
-        userSessions.get(0).actualizeLastActivityTime();
         cache.upsertSession(userSessions.get(0));
         Thread.sleep((cacheExpiry + 1) * 1000 / 2);
         long cachedCount = userSessions.stream()
