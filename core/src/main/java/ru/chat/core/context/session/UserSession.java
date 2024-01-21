@@ -16,7 +16,8 @@ public class UserSession {
 
     private String login;
 
-    private UserSessionStatus status;
+    @Builder.Default
+    private UserSessionStatus status = UserSessionStatus.OPENED;
 
     @Builder.Default
     private LocalDateTime lastActivityTime = LocalDateTime.now();
