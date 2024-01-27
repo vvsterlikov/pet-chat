@@ -8,13 +8,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
+    <include file="classpath:changelog/changelog001.xml"/>
+    <include file="prepare-test-data.sql" relativeToChangelogFile="true"/>
 
-    <changeSet  id="createTable001"  author="vsterlikov">
-        <createTable tableName="USER_SESSION">
-            <column name="ID" type="serial"></column>
-            <column name="USER_LOGIN" type="varchar(50)"></column>
-            <column name="STATUS" type="varchar(50)"></column>
-            <column name="SESSION_UUID" type="varchar(50)"></column>
-        </createTable>
-    </changeSet>
 </databaseChangeLog>

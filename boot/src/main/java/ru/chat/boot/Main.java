@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication(scanBasePackages = {"ru.chat.rest",
         "ru.chat.boot",
         "ru.chat.core",
+        "ru.chat.core.data.service", //todo: убрать после добавления dgs, не должно быть снаружи
 })
 @EnableJpaRepositories("ru.chat.core.data.repository")
 @EntityScan("ru.chat.core.data.entity")

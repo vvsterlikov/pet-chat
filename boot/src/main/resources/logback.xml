@@ -8,6 +8,8 @@
         </encoder>
     </appender>
 
+    <logger name="liquibase" level="TRACE" />
+
     <root level="debug">
         <appender-ref ref="STDOUT" />
     </root>

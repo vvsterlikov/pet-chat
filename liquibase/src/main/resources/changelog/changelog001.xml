@@ -1,1 +1,30 @@
-111
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <changeSet id="createSchema" author="vsterlikov">
+        <sql dbms="h2">
+            create schema if not exists CHAT
+        </sql>
+    </changeSet>
+    <changeSet  id="createTable001"  author="vsterlikov">
+
+        <createTable tableName="USER_SESSION">
+            <column name="ID" type="serial" />
+            <column name="USER_LOGIN" type="varchar(50)" />
+            <column name="STATUS" type="varchar(50)" />
+            <column name="SESSION_UUID" type="varchar(50)" />
+        </createTable>
+        <createTable tableName="CHAT_USER">
+            <column name="ID" type="serial" />
+            <column name="LOGIN" type="varchar(50)" />
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
