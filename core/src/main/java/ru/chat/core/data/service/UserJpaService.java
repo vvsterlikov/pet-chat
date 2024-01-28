@@ -3,7 +3,7 @@ package ru.chat.core.data.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.chat.core.data.entity.ChatUserEntity;
-import ru.chat.core.data.repository.UserRepository;
+import ru.chat.core.data.repository.ChatUserRepository;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class UserJpaService {
 
-    private final UserRepository userRepository;
+    private final ChatUserRepository userRepository;
 
     public List<ChatUserEntity> findByLogin(String login) {
         return  userRepository.findByLogin(login);

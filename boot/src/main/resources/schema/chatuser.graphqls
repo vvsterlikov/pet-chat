@@ -1,0 +1,17 @@
+type QueryResolver {
+   chatusers: [ChatUser]
+   chatuser(id: ID!): ChatUser!
+}
+
+type MutationResolver {
+   newChatUser(chatuser: ChatUserInput!): ChatUser
+}
+
+input ChatUserInput {
+   id: ID!
+}
+
+type ChatUser {
+   id: ID!
+   login: String!
+}

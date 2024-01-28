@@ -5,7 +5,7 @@ import ru.chat.core.data.entity.ChatUserEntity;
 
 import java.util.List;
 
-public interface UserRepository extends CrudRepository<ChatUserEntity, Long> {
+public interface ChatUserRepository extends CrudRepository<ChatUserEntity, Long> {
 
     List<ChatUserEntity> findByLogin(String login);
 }
